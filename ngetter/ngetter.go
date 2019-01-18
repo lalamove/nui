@@ -1,0 +1,80 @@
+package ngetter
+
+import (
+	"fmt"
+
+	"github.com/spf13/cast"
+)
+
+// Getter is a generic interface to get a value
+type Getter interface {
+	Get() interface{}
+}
+
+// Inter is an interface to get an int value
+type Inter interface {
+	Int() int
+}
+
+// Inter64 is an interface to get an int64 value
+type Inter64 interface {
+	Int64() int64
+}
+
+// Floater64 is an interface to get a Float64 value
+type Floater64 interface {
+	Float64() float64
+}
+
+// Booler is an interface to get a bool value
+type Booler interface {
+	Bool() bool
+}
+
+// Stringer is an alias to fmt.Stringer
+type Stringer fmt.Stringer
+
+// GetterTyped is a getter with methods to cast
+type GetterTyped interface {
+	Getter
+	Inter
+	Inter64
+	Floater64
+	Booler
+	Stringer
+}
+
+var _ GetterTyped = (GetterTypedFunc)(nil)
+
+// GetterTypedFunc is a function implementing the GetterTyped interface
+type GetterTypedFunc func() interface{}
+
+// Get returns the interface{} value
+func (f GetterTypedFunc) Get() interface{} {
+	return f()
+}
+
+// String returns the string value
+func (f GetterTypedFunc) String() string {
+	return cast.ToString(f())
+}
+
+// Int returns the int value
+func (f GetterTypedFunc) Int() int {
+	return cast.ToInt(f())
+}
+
+// Int64 returns the int64 value
+func (f GetterTypedFunc) Int64() int64 {
+	return cast.ToInt64(f())
+}
+
+// Float64 returns the float64 value
+func (f GetterTypedFunc) Float64() float64 {
+	return cast.ToFloat64(f())
+}
+
+// Bool returns the bool value
+func (f GetterTypedFunc) Bool() bool {
+	return cast.ToBool(f())
+}
