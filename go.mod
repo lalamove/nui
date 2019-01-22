@@ -1,4 +1,4 @@
-module git.easygroup.co/lalamove/nui
+module github.com/lalamove/nui
 
 require (
 	github.com/davecgh/go-spew v1.1.1
