@@ -2,9 +2,43 @@ package ngetter
 
 import (
 	"fmt"
+	"sync"
+	"sync/atomic"
 
 	"github.com/spf13/cast"
 )
+
+// Provider is an interface to provide a value in a thread safe manner
+// And be able to replace this value in a thread safe manner.
+type Provider interface {
+	Getter
+	Replace(interface{})
+}
+
+type provider struct {
+	v   *atomic.Value
+	mut *sync.Mutex
+}
+
+func (p *provider) Get() interface{} {
+	return p.v.Load()
+}
+
+func (p *provider) Replace(v interface{}) {
+	p.mut.Lock()
+	p.v.Store(v)
+	p.mut.Unlock()
+}
+
+// NewProvider returns a new Provider from the given value x
+func NewProvider(x interface{}) Provider {
+	var v atomic.Value
+	v.Store(x)
+	return &provider{
+		v:   &v,
+		mut: &sync.Mutex{},
+	}
+}
 
 // Getter is a generic interface to get a value
 type Getter interface {
