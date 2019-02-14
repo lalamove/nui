@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 	"log"
+	"sync"
+	"sync/atomic"
 )
 
 type loggerKey string
@@ -81,4 +83,39 @@ func MustFromContext(ctx context.Context) Logger {
 		panic(ErrLoggerNotFoundInContext)
 	}
 	return v.(Logger)
+}
+
+// Provider is an interface to get a thread safe logger provider with
+// the ability to replace the internal logger provided
+type Provider interface {
+	// Get returns the Provider's attached logger in a thread safe manner
+	Get() Logger
+	// Replace replaces the provider's internal logger in a thread safe manner
+	Replace(Logger)
+}
+
+type provider struct {
+	v   *atomic.Value
+	mut *sync.Mutex
+}
+
+// NewProvider returns a new Logger Provider from the given Logger l
+func NewProvider(l Logger) Provider {
+	var v atomic.Value
+	v.Store(l)
+
+	return &provider{
+		v:   &v,
+		mut: &sync.Mutex{},
+	}
+}
+
+func (s *provider) Get() Logger {
+	return s.v.Load().(Logger)
+}
+
+func (s *provider) Replace(l Logger) {
+	s.mut.Lock()
+	s.v.Store(l)
+	s.mut.Unlock()
 }

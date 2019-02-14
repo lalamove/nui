@@ -67,3 +67,19 @@ func TestPrintLogInInfoWithPreFix(t *testing.T) {
 	assert.Contains(t, target.String(), msg)
 	assert.Contains(t, target.String(), prefix)
 }
+
+func TestProvider(t *testing.T) {
+	var l = New(ioutil.Discard, "")
+	var n = NewProvider(l)
+
+	if l != n.Get() {
+		t.Error("Logger from provider is not the same")
+	}
+
+	var l2 = New(ioutil.Discard, "")
+	n.Replace(l2)
+
+	if l2 != n.Get() {
+		t.Error("Logger from provider is not the same as the one we called replace with")
+	}
+}
