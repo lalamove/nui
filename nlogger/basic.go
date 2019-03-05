@@ -36,34 +36,28 @@ func (e *entry) format(key string, value string) {
 	e.builder.WriteString(value)
 }
 
-func (e *entry) String(key string, value string) Entry {
+func (e *entry) String(key string, value string) {
 	e.format(key, value)
-	return e
 }
 
-func (e *entry) Int(key string, value int) Entry {
+func (e *entry) Int(key string, value int) {
 	e.format(key, strconv.Itoa(value))
-	return e
 }
 
-func (e *entry) Int64(key string, value int64) Entry {
+func (e *entry) Int64(key string, value int64) {
 	e.format(key, fmt.Sprintf("%d", value))
-	return e
 }
 
-func (e *entry) Float(key string, value float64) Entry {
+func (e *entry) Float(key string, value float64) {
 	e.format(key, fmt.Sprintf("%f", value))
-	return e
 }
 
-func (e *entry) Bool(key string, value bool) Entry {
+func (e *entry) Bool(key string, value bool) {
 	e.format(key, strconv.FormatBool(value))
-	return e
 }
 
-func (e *entry) Err(key string, value error) Entry {
+func (e *entry) Err(key string, value error) {
 	e.format(key, value.Error())
-	return e
 }
 
 type basicStructured struct {

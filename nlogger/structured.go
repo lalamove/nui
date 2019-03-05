@@ -18,16 +18,16 @@ var ErrLoggerNotFoundInContext = errors.New("Logger not found in context")
 // Entry represents a single log line and is what you use in the *WithFields callback.
 // You would call any of the functions in the interface to add a keyed value to the log line.
 type Entry interface {
-	String(key string, value string) Entry
-	Int(key string, value int) Entry
-	Int64(key string, value int64) Entry
-	Float(key string, value float64) Entry
-	Bool(key string, value bool) Entry
-	Err(key string, value error) Entry
+	String(key string, value string)
+	Int(key string, value int)
+	Int64(key string, value int64)
+	Float(key string, value float64)
+	Bool(key string, value bool)
+	Err(key string, value error)
 }
 
 // EntryFunc defines the callback that you implement when using the *WithFields function
-type EntryFunc func(Entry) Entry
+type EntryFunc func(Entry)
 
 // Structured is a generic structured logger that allows you to add fields to log messages
 type Structured interface {
