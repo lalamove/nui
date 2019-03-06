@@ -60,6 +60,14 @@ func (e *entry) Err(key string, value error) {
 	e.format(key, value.Error())
 }
 
+func (e *entry) ObjectFunc(key string, value EntryFunc) {
+	e.builder.WriteRune(' ')
+	e.builder.WriteString(key)
+	e.builder.WriteString("={")
+	value(e)
+	e.builder.WriteString(" }")
+}
+
 type basicStructured struct {
 	logger Basic
 }

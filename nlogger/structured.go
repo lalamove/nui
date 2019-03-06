@@ -24,6 +24,7 @@ type Entry interface {
 	Float(key string, value float64)
 	Bool(key string, value bool)
 	Err(key string, value error)
+	ObjectFunc(key string, value EntryFunc)
 }
 
 // EntryFunc defines the callback that you implement when using the *WithFields function
