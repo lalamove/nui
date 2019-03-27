@@ -3,6 +3,7 @@ package nlogger
 import (
 	"context"
 	"errors"
+	"reflect"
 	"sync/atomic"
 )
 
@@ -103,9 +104,12 @@ func (s *provider) Replace(l Structured) {
 		if l != nil {
 			if r := recover(); r != nil {
 				var logger = s.Get().(Structured)
-				logger.Error(
-					"your new logger is not the same concrete type of logger as your old logger, " +
-						"we will continue using the old logger")
+				logger.ErrorWithFields(
+					"your new logger is not the same concrete type of logger as your old logger, "+
+						"we will continue using the old logger", func(e Entry) {
+						e.String("oldLoggerType", reflect.ValueOf(logger).Type().String())
+						e.String("newLoggerType", reflect.ValueOf(l).Type().String())
+					})
 			}
 		}
 	}()

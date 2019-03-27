@@ -3,7 +3,9 @@ package nlogger
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -69,11 +71,31 @@ func TestPrintLogInInfoWithPreFix(t *testing.T) {
 }
 
 func TestProvider(t *testing.T) {
-	var l = New(ioutil.Discard, "")
+	var buf = new(bytes.Buffer)
+	var l = New(buf, "")
 	var n = NewProvider(l)
 
 	if l != n.Get() {
 		t.Error("Logger from provider is not the same")
+	}
+
+	type testStructured struct {
+		basicStructured
+	}
+	// test the panic handler
+	n.Replace(&testStructured{
+		basicStructured{&defaultLogger{log.New(ioutil.Discard, "", log.LstdFlags)}},
+	})
+	var msg = buf.String()
+	var expMsg = "your new logger is not the same concrete type of logger as your old logger, " +
+		"we will continue using the old logger oldLoggerType=*nlogger.basicStructured newLoggerType=*nlogger.testStructured"
+
+	if strings.Compare(msg[20:], expMsg) == 0 {
+		t.Error("Did not reach the panic handler when trying to replace logger with another concrete type ")
+	}
+
+	if l != n.Get() {
+		t.Error("Logger from provider was replaced with that of another concrete type")
 	}
 
 	var l2 = New(ioutil.Discard, "")
