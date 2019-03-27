@@ -3,7 +3,6 @@ package nlogger
 import (
 	"context"
 	"errors"
-	"sync"
 	"sync/atomic"
 )
 
@@ -79,8 +78,7 @@ type Provider interface {
 }
 
 type provider struct {
-	v   *atomic.Value
-	mut *sync.Mutex
+	v *atomic.Value
 }
 
 // NewProvider returns a new Structured Provider from the given Logger l
@@ -89,8 +87,7 @@ func NewProvider(l Structured) Provider {
 	v.Store(l)
 
 	return &provider{
-		v:   &v,
-		mut: &sync.Mutex{},
+		v: &v,
 	}
 }
 
@@ -101,7 +98,16 @@ func (s *provider) Get() Structured {
 
 // Replace the logger inside the Provider
 func (s *provider) Replace(l Structured) {
-	s.mut.Lock()
+	defer func() {
+		// will handle panic only if it is caused by a non-nil interface
+		if l != nil {
+			if r := recover(); r != nil {
+				var logger = s.Get().(Structured)
+				logger.Error(
+					"your new logger is not of the same concrete type of logger as your old logger, " +
+						"we will continue using the old logger")
+			}
+		}
+	}()
 	s.v.Store(l)
-	s.mut.Unlock()
 }

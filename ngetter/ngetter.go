@@ -2,7 +2,6 @@ package ngetter
 
 import (
 	"fmt"
-	"sync"
 	"sync/atomic"
 
 	"github.com/spf13/cast"
@@ -16,8 +15,7 @@ type Provider interface {
 }
 
 type provider struct {
-	v   *atomic.Value
-	mut *sync.Mutex
+	v *atomic.Value
 }
 
 func (p *provider) Get() interface{} {
@@ -25,9 +23,7 @@ func (p *provider) Get() interface{} {
 }
 
 func (p *provider) Replace(v interface{}) {
-	p.mut.Lock()
 	p.v.Store(v)
-	p.mut.Unlock()
 }
 
 // NewProvider returns a new Provider from the given value x
@@ -35,8 +31,7 @@ func NewProvider(x interface{}) Provider {
 	var v atomic.Value
 	v.Store(x)
 	return &provider{
-		v:   &v,
-		mut: &sync.Mutex{},
+		v: &v,
 	}
 }
 
