@@ -104,7 +104,7 @@ func (s *provider) Replace(l Structured) {
 			if r := recover(); r != nil {
 				var logger = s.Get().(Structured)
 				logger.Error(
-					"your new logger is not of the same concrete type of logger as your old logger, " +
+					"your new logger is not the same concrete type of logger as your old logger, " +
 						"we will continue using the old logger")
 			}
 		}
