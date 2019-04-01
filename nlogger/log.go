@@ -20,6 +20,12 @@ func New(target io.Writer, prefix string) Structured {
 	return &basicStructured{&defaultLogger{log.New(target, prefix, log.LstdFlags)}}
 }
 
+// NewWithLog allows you to pass in a log.Logger which then gets snuggly wrapped in
+// an interface that suits the nlogger.Structured interface.
+func NewWithLog(log *log.Logger) Structured {
+	return &basicStructured{&defaultLogger{log}}
+}
+
 type defaultLogger struct {
 	*log.Logger
 }
