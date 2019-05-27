@@ -32,9 +32,9 @@ func NewChildSpanFromContext(
 func NewChildSpanAndContext(
 	ctx context.Context,
 	name string,
-) (opentracing.Span, context.Context, bool) {
+) (context.Context, opentracing.Span, bool) {
 	if span, ok := NewChildSpanFromContext(ctx, name); ok {
-		return span, context.WithValue(ctx, SpanKey, span), true
+		return context.WithValue(ctx, SpanKey, span), span, true
 	}
-	return nil, ctx, false
+	return ctx, nil, false
 }
