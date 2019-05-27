@@ -33,12 +33,8 @@ func NewChildSpanAndContext(
 	ctx context.Context,
 	name string,
 ) (opentracing.Span, context.Context, bool) {
-	if span, ok := ctx.Value(SpanKey).(opentracing.Span); ok && span != nil {
-		var childSpan = opentracing.StartSpan(
-			name,
-			opentracing.ChildOf(span.Context()),
-		)
-		return childSpan, context.WithValue(ctx, SpanKey, childSpan), true
+	if span, ok := NewChildSpanFromContext(ctx, name); ok {
+		return span, context.WithValue(ctx, SpanKey, span), true
 	}
 	return nil, ctx, false
 }
