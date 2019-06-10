@@ -39,3 +39,6 @@ Time toolbox. Time interface wrapping `time.Time` package.
 
 Getter interface to retrieve values.
 
+- [Metrics](nmetrics/README.md)
+
+Interface for a registry in [prometheus](https://github.com/prometheus/client_golang)
